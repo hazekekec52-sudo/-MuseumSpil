@@ -1,0 +1,60 @@
+[gd_scene format=3 uid="uid://dpocvvabd3tc3"]
+
+[ext_resource type="Script" uid="uid://c3ni27psfvaai" path="res://maleri.gd" id="2_noarx"]
+[ext_resource type="PackedScene" uid="uid://bwnhnqadmab3s" path="res://Spiller.tscn" id="3_a0tk4"]
+[ext_resource type="Texture2D" uid="uid://cw4kjiuog4pyw" path="res://batman.png" id="3_r3fl7"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_7vx3n"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_noarx"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_a0tk4"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v3aha"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_v3aha"]
+size = Vector2(2, 2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jgolk"]
+size = Vector3(2, 2, 0.1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h8ndj"]
+albedo_texture = ExtResource("3_r3fl7")
+
+[sub_resource type="QuadMesh" id="QuadMesh_jgolk"]
+size = Vector2(2, 2)
+
+[node name="Node3D" type="Node3D" unique_id=175385526]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=810133959]
+transform = Transform3D(18.549856, 0.054561973, 0.048280414, -0.0548649, 18.549551, 0.11673419, -0.047935896, -0.11687608, 18.54957, 0.012124777, 0.28933108, -0.019518375)
+mesh = SubResource("PlaneMesh_7vx3n")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=461903337]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=1911995263]
+shape = SubResource("ConcavePolygonShape3D_noarx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=468723191]
+transform = Transform3D(18.55, 0, 0, 0, 18.55, 0, 0, 0, 18.55, 0, 0.27833426, 0)
+shape = SubResource("ConcavePolygonShape3D_a0tk4")
+
+[node name="Player" parent="." unique_id=567520607 instance=ExtResource("3_a0tk4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.035630256, 0.2913432, -0.42335325)
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="." unique_id=1360278644]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8372357, -8.919479)
+material_override = SubResource("StandardMaterial3D_v3aha")
+mesh = SubResource("QuadMesh_v3aha")
+script = ExtResource("2_noarx")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D2" unique_id=1076416537]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D2/StaticBody3D" unique_id=2122532357]
+shape = SubResource("BoxShape3D_jgolk")
+
+[node name="Billede" type="MeshInstance3D" parent="MeshInstance3D2" unique_id=1018399138]
+material_override = SubResource("StandardMaterial3D_h8ndj")
+mesh = SubResource("QuadMesh_jgolk")

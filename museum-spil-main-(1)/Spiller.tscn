@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://bwnhnqadmab3s"]
+
+[ext_resource type="Texture2D" uid="uid://cqwrx18sal3x3" path="res://våben.png" id="1_petdw"]
+[ext_resource type="ArrayMesh" uid="uid://co4a0rfn5v7lo" path="res://malerpistolos.obj" id="2_u7gbl"]
+
+[sub_resource type="GDScript" id="GDScript_w6gvy"]
+script/source = "
+extends CharacterBody3D
+
+const SPEED = 5.0
+const JUMP_VELOCITY = 4.5
+const MOUSE_SENSITIVITY = 0.002
+const PAINTBALL_SCENE = preload(\"res://PaintBall.tscn\")
+const SKUD_PAUSE = 0.15
+
+@onready var camera: Camera3D = $Camera3D
+@onready var pistol: Node3D = $Camera3D/Malerpistolos
+@onready var munding: Marker3D = $Camera3D/Malerpistolos/Munding
+
+var mouse_captured = false
+var pistol_fremme = false
+var skud_timer = 0.0
+
+
+func _ready() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	mouse_captured = true
+	pistol.visible = false
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Kig rundt med musen
+	if event is InputEventMouseMotion and mouse_captured:
+		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
+		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
+		camera.rotation.x = clamp(
+			camera.rotation.x,
+			deg_to_rad(-89),
+			deg_to_rad(89)
+		)
+
+	# Frigiv musen med Escape
+	if event.is_action_pressed(\"ui_cancel\"):
+		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		mouse_captured = false
+
+	# Klik for at fange musen igen
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			if not mouse_captured:
+				Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+				mouse_captured = true
+
+	# Tag pistolen frem eller gem den med tast 1
+	if event is InputEventKey:
+		if event.pressed and not event.echo:
+			if event.keycode == KEY_1:
+				pistol_fremme = not pistol_fremme
+				pistol.visible = pistol_fremme
+
+
+func _process(delta: float) -> void:
+	skud_timer = maxf(0.0, skud_timer - delta)
+
+	# Skyd gentagne gange, mens venstre museknap holdes nede
+	if mouse_captured and pistol_fremme:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			if skud_timer <= 0.0:
+				skyd()
+				skud_timer = SKUD_PAUSE
+
+
+func _physics_process(delta: float) -> void:
+	# Tyngdekraft
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Hop med mellemrum
+	if Input.is_key_pressed(KEY_SPACE) and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	# WASD-bevægelse
+	var input_dir := Vector2.ZERO
+
+	if Input.is_key_pressed(KEY_A):
+		input_dir.x -= 1
+	if Input.is_key_pressed(KEY_D):
+		input_dir.x += 1
+	if Input.is_key_pressed(KEY_W):
+		input_dir.y -= 1
+	if Input.is_key_pressed(KEY_S):
+		input_dir.y += 1
+
+	input_dir = input_dir.normalized()
+
+	# Bevægelse i forhold til spillerens retning
+	var direction := transform.basis * Vector3(
+		input_dir.x, 0, input_dir.y
+	)
+	direction = direction.normalized()
+
+	if direction.length() > 0:
+		velocity.x = direction.x * SPEED
+		velocity.z = direction.z * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+
+	move_and_slide()
+
+
+func skyd() -> void:
+	var fra = camera.global_position
+	var til = fra + (-camera.global_transform.basis.z * 100.0)
+
+	var forespoergsel = PhysicsRayQueryParameters3D.create(fra, til)
+	forespoergsel.exclude = [get_rid()]
+
+	var resultat = get_world_3d().direct_space_state.intersect_ray(forespoergsel)
+
+	var maalpunkt: Vector3
+	if resultat.is_empty():
+		maalpunkt = til
+	else:
+		maalpunkt = resultat[\"position\"]
+
+	var kugle = PAINTBALL_SCENE.instantiate()
+	get_tree().current_scene.add_child(kugle)
+
+	var start_position = munding.global_position
+	var retning = (maalpunkt - start_position).normalized()
+
+	kugle.start(start_position, retning)
+"
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_w6gvy"]
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_nindv"]
+points = PackedVector3Array(-0.12520654, -0.532801, -0.4805069, 0.022783129, 0.4760704, 0.49888408, 0.16971254, 0.5591441, 0.46417162, 0.23105091, -0.8035912, 0.32045516, 0.40741014, 0.651043, -0.24352328, -0.4827893, 0.59484255, 0.082213186, -0.3628679, -0.68231165, 0.2896967, 0.46904355, -0.65452886, -0.06627126, -0.12744367, 0.8427015, -0.33810276, -0.39343542, -0.6839421, -0.24471663, 0.43825462, 0.62330925, 0.20084947, 0.0841477, 0.977454, 0.11479468, -0.06820232, -0.9764576, -0.12927033, 0.20054972, -0.56312895, -0.4514544, -0.18552664, 0.59545326, -0.4534751, -0.27336287, 0.59226835, 0.40775412, -0.0069364863, -0.47682306, 0.49966025, 0.37582088, -0.5886136, 0.31695515, 0.111579016, 0.5630594, -0.48117727, -0.41725034, 0.5278656, -0.27049688, -0.48454633, -0.59697217, -0.06650971, -0.27974695, 0.90856135, 0.05333608, -0.25019687, -0.8807117, 0.20531891, 0.263647, -0.90277094, -0.1273943, 0.29336792, 0.8715263, -0.15719566, 0.3734115, -0.5263189, -0.32824618, 0.4996626, 0.47664148, -0.0068885577, 0.053105574, 0.8750009, 0.32470253, -0.15454252, -0.5908538, 0.4658794, -0.09727988, -0.7823577, -0.39818847, -0.3876489, -0.49817133, 0.31564978, -0.30067965, -0.58799505, -0.38890144)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_petdw"]
+albedo_texture = ExtResource("1_petdw")
+
+[node name="Player" type="CharacterBody3D" unique_id=567520607]
+script = SubResource("GDScript_w6gvy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=564256915]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_w6gvy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=285802847]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("ConvexPolygonShape3D_nindv")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1828959719]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6356637, -0.40668952)
+
+[node name="Malerpistolos" type="MeshInstance3D" parent="Camera3D" unique_id=1096498231]
+transform = Transform3D(-0.41788083, 0, -0.120833, 0, 0.435, 0, 0.120833, 0, -0.41788083, 0.724, -1.6206638, -0.5323105)
+material_override = SubResource("StandardMaterial3D_petdw")
+mesh = ExtResource("2_u7gbl")
+
+[node name="Munding" type="Marker3D" parent="Camera3D/Malerpistolos" unique_id=62208235]
+transform = Transform3D(0.99999917, 0, -5.9604645e-08, 0, 0.99999875, 0, 5.9604645e-08, 0, 0.99999917, 0.04701996, 3.2908046, 2.7005672)
