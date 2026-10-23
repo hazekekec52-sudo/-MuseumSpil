@@ -1,0 +1,89 @@
+[gd_scene format=3 uid="uid://dpocvvabd3tc3"]
+
+[ext_resource type="Texture2D" uid="uid://cqwrx18sal3x3" path="res://våben.png" id="1_noarx"]
+[ext_resource type="ArrayMesh" uid="uid://co4a0rfn5v7lo" path="res://malerpistolos.obj" id="2_a0tk4"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_w6gvy"]
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_r3fl7"]
+data = PackedVector3Array(1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1)
+
+[sub_resource type="GDScript" id="GDScript_i5arm"]
+script/source = "extends CharacterBody3D
+
+
+const SPEED = 5.0
+const JUMP_VELOCITY = 4.5
+
+
+func _physics_process(delta: float) -> void:
+	# Add the gravity.
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	# Handle jump.
+	if Input.is_action_just_pressed(\"ui_accept\") and is_on_floor():
+		velocity.y = JUMP_VELOCITY
+
+	# Get the input direction and handle the movement/deceleration.
+	# As good practice, you should replace UI actions with custom gameplay actions.
+	var input_dir := Input.get_vector(\"ui_left\", \"ui_right\", \"ui_up\", \"ui_down\")
+	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	if direction:
+		velocity.x = direction.x * SPEED
+		velocity.z = direction.z * SPEED
+	else:
+		velocity.x = move_toward(velocity.x, 0, SPEED)
+		velocity.z = move_toward(velocity.z, 0, SPEED)
+
+	move_and_slide()
+"
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_w6gvy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jka67"]
+albedo_texture = ExtResource("1_noarx")
+
+[sub_resource type="GDScript" id="GDScript_w6gvy"]
+script/source = "extends MeshInstance3D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
+
+[node name="Node3D" type="Node3D" unique_id=175385526]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1692189188]
+transform = Transform3D(2.895, 0, 0, 0, 2.895, 0, 0, 0, 2.895, -0.009916306, 0.36678278, -0.006650448)
+mesh = SubResource("PlaneMesh_w6gvy")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="MeshInstance3D" unique_id=267298357]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="MeshInstance3D/StaticBody3D" unique_id=2086285603]
+shape = SubResource("ConcavePolygonShape3D_r3fl7")
+
+[node name="Player" type="Node3D" parent="." unique_id=580663648]
+
+[node name="CharacterBody3D" type="CharacterBody3D" parent="Player" unique_id=961284133]
+script = SubResource("GDScript_i5arm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player/CharacterBody3D" unique_id=1417517875]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7152586, 0)
+shape = SubResource("CapsuleShape3D_w6gvy")
+debug_color = Color(0.17964742, 0.5214404, 0.983666, 0.41960785)
+
+[node name="Camera3D" type="Camera3D" parent="Player/CharacterBody3D/CollisionShape3D" unique_id=1975388990]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52165604, 0)
+
+[node name="Malerpistolos" type="MeshInstance3D" parent="Player/CharacterBody3D/CollisionShape3D/Camera3D" unique_id=1107480224]
+transform = Transform3D(-0.27000773, 0, -0.16223696, 0, 0.315, 0, 0.16223696, 0, -0.27000773, 0.59200364, -1.1876409, -0.48367548)
+material_override = SubResource("StandardMaterial3D_jka67")
+mesh = ExtResource("2_a0tk4")
+script = SubResource("GDScript_w6gvy")
