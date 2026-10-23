@@ -12,21 +12,25 @@ const JUMP_VELOCITY = 4.5
 const MOUSE_SENSITIVITY = 0.002
 
 @onready var camera: Camera3D = $Camera3D
+@onready var pistol: Node3D = $Camera3D/Malerpistolos
 
 var mouse_captured = false
+var pistol_fremme = false
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	mouse_captured = true
 
+	# Start uden pistolen
+	pistol.visible = false
+
 
 func _unhandled_input(event: InputEvent) -> void:
+	# Kig rundt med musen
 	if event is InputEventMouseMotion and mouse_captured:
-		# Kig til siderne med musen
 		rotate_y(-event.relative.x * MOUSE_SENSITIVITY)
 
-		# Kig op og ned med kameraet
 		camera.rotate_x(-event.relative.y * MOUSE_SENSITIVITY)
 		camera.rotation.x = clamp(
 			camera.rotation.x,
@@ -44,6 +48,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		if event.button_index == MOUSE_BUTTON_LEFT and not mouse_captured:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 			mouse_captured = true
+
+	# Tag pistolen frem eller gem den med tast 1
+	if event is InputEventKey:
+		if event.pressed and not event.echo:
+			if event.keycode == KEY_1:
+				pistol_fremme = not pistol_fremme
+				pistol.visible = pistol_fremme
 
 
 func _physics_process(delta: float) -> void:
