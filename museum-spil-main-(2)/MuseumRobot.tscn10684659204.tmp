@@ -1,0 +1,71 @@
+[gd_scene format=3 uid="uid://brnryg1f3bek3"]
+
+[sub_resource type="GDScript" id="GDScript_w6gvy"]
+script/source = "extends Node3D
+
+@export var float_speed: float = 2.0
+@export var float_height: float = 0.2
+@export var move_speed: float = 2.0
+
+@export var waypoints: Array[Marker3D] = []
+@export var explanations: PackedStringArray = []
+
+@export var reading_time: float = 15.0
+
+@onready var text_label: Label3D = $TextLabel
+
+var start_y: float
+var current_point: int = 0
+var waiting: bool = false
+var timer: float = 0.0
+
+func _ready():
+	start_y = global_position.y
+	text_label.text = \"Velkommen til Storm P. Museet!\"
+
+func _process(delta):
+	var bob = sin(Time.get_ticks_msec() / 1000.0 * float_speed) * float_height
+
+	if waiting:
+		timer -= delta
+
+		if timer <= 0:
+			waiting = false
+			current_point += 1
+
+		return
+
+	if current_point >= waypoints.size():
+		text_label.text = \"Tak for rundturen!\"
+		return
+
+	var target = waypoints[current_point].global_position
+	target.y += bob
+
+	global_position = global_position.move_toward(
+		target,
+		move_speed * delta
+	)
+
+	if global_position.distance_to(target) < 0.1:
+		waiting = true
+		timer = reading_time
+
+		if current_point < explanations.size():
+			text_label.text = explanations[current_point]
+"
+
+[sub_resource type="SphereMesh" id="SphereMesh_w6gvy"]
+
+[node name="MuseumRobot" type="Node3D" unique_id=1007183541]
+script = SubResource("GDScript_w6gvy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=2136072039]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55625737, 0)
+mesh = SubResource("SphereMesh_w6gvy")
+
+[node name="TextLabel" type="Label3D" parent="MeshInstance3D" unique_id=1510048343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4999999, 0)
+billboard = 1
+text = "Velkommen til Storm P. museet!"
+font_size = 48

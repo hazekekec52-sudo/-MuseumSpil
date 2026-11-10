@@ -1,0 +1,248 @@
+[gd_scene format=3 uid="uid://58o0f1idmemj"]
+
+[sub_resource type="GDScript" id="GDScript_62kbk"]
+script/source = "
+extends Node3D
+
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var area: Area3D = $Area3D
+
+var player_nearby = false
+var door_open = false
+
+
+func _ready() -> void:
+	area.body_entered.connect(_on_body_entered)
+	area.body_exited.connect(_on_body_exited)
+
+
+func _process(_delta: float) -> void:
+	if player_nearby and Input.is_action_just_pressed(\"interact\"):
+		if not door_open:
+			animation_player.play(\"Door_opening\")
+			door_open = true
+		else:
+			animation_player.play(\"Door_closed\")
+			door_open = false
+
+
+func _on_body_entered(body: Node3D) -> void:
+	if body.is_in_group(\"player\"):
+		player_nearby = true
+
+
+func _on_body_exited(body: Node3D) -> void:
+	if body.is_in_group(\"player\"):
+		player_nearby = false
+"
+
+[sub_resource type="BoxMesh" id="BoxMesh_7vx3n"]
+size = Vector3(1, 2.338745, 0.06347656)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_6vx1n"]
+data = PackedVector3Array(-0.5, 1.1694, 0.0317, 0.5, 1.1694, 0.0317, -0.5, -1.1694, 0.0317, 0.5, 1.1694, 0.0317, 0.5, -1.1694, 0.0317, -0.5, -1.1694, 0.0317, 0.5, 1.1694, -0.0317, -0.5, 1.1694, -0.0317, 0.5, -1.1694, -0.0317, -0.5, 1.1694, -0.0317, -0.5, -1.1694, -0.0317, 0.5, -1.1694, -0.0317, 0.5, 1.1694, 0.0317, 0.5, 1.1694, -0.0317, 0.5, -1.1694, 0.0317, 0.5, 1.1694, -0.0317, 0.5, -1.1694, -0.0317, 0.5, -1.1694, 0.0317, -0.5, 1.1694, -0.0317, -0.5, 1.1694, 0.0317, -0.5, -1.1694, -0.0317, -0.5, 1.1694, 0.0317, -0.5, -1.1694, 0.0317, -0.5, -1.1694, -0.0317, 0.5, 1.1694, 0.0317, -0.5, 1.1694, 0.0317, 0.5, 1.1694, -0.0317, -0.5, 1.1694, 0.0317, -0.5, 1.1694, -0.0317, 0.5, 1.1694, -0.0317, -0.5, -1.1694, 0.0317, 0.5, -1.1694, 0.0317, -0.5, -1.1694, -0.0317, 0.5, -1.1694, 0.0317, 0.5, -1.1694, -0.0317, -0.5, -1.1694, -0.0317)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_s6ssv"]
+data = PackedVector3Array(-0.5, 1.1694, 0.0317, 0.5, 1.1694, 0.0317, -0.5, -1.1694, 0.0317, 0.5, 1.1694, 0.0317, 0.5, -1.1694, 0.0317, -0.5, -1.1694, 0.0317, 0.5, 1.1694, -0.0317, -0.5, 1.1694, -0.0317, 0.5, -1.1694, -0.0317, -0.5, 1.1694, -0.0317, -0.5, -1.1694, -0.0317, 0.5, -1.1694, -0.0317, 0.5, 1.1694, 0.0317, 0.5, 1.1694, -0.0317, 0.5, -1.1694, 0.0317, 0.5, 1.1694, -0.0317, 0.5, -1.1694, -0.0317, 0.5, -1.1694, 0.0317, -0.5, 1.1694, -0.0317, -0.5, 1.1694, 0.0317, -0.5, -1.1694, -0.0317, -0.5, 1.1694, 0.0317, -0.5, -1.1694, 0.0317, -0.5, -1.1694, -0.0317, 0.5, 1.1694, 0.0317, -0.5, 1.1694, 0.0317, 0.5, 1.1694, -0.0317, -0.5, 1.1694, 0.0317, -0.5, 1.1694, -0.0317, 0.5, 1.1694, -0.0317, -0.5, -1.1694, 0.0317, 0.5, -1.1694, 0.0317, -0.5, -1.1694, -0.0317, 0.5, -1.1694, 0.0317, 0.5, -1.1694, -0.0317, -0.5, -1.1694, -0.0317)
+
+[sub_resource type="Animation" id="Animation_s6ssv"]
+resource_name = "Door_cLOSED"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DørPlade:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(-0.4, 1.252, 4.5), Vector3(0.3448152, 1.251878, 4.9585867)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DørPlade:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 1.5707964, 0), Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DørPlade2:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, -1.5707964, 0), Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DørPlade2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1.4, 1.252, 4.5), Vector3(1.4, 1.252, 4.9441576)]
+}
+
+[sub_resource type="Animation" id="Animation_62kbk"]
+resource_name = "Door_opening"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DørPlade:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.3448152, 1.251878, 4.9585867), Vector3(-0.4, 1.252, 4.5)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DørPlade:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 1.5707964, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DørPlade2:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, -1.5707964, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DørPlade2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1.4, 1.252, 4.9441576), Vector3(1.4, 1.252, 4.5)]
+}
+
+[sub_resource type="Animation" id="Animation_6vx1n"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("DørPlade:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 1.251878, 4.9585867)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("DørPlade:rotation")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("DørPlade2:rotation")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("DørPlade2:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1.0411708, 1.251878, 4.9585867)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_s6ssv"]
+_data = {
+&"Door_cLOSED": SubResource("Animation_s6ssv"),
+&"Door_opening": SubResource("Animation_62kbk"),
+&"RESET": SubResource("Animation_6vx1n")
+}
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_w6gvy"]
+size = Vector3(2.6490822, 2.59906, 1.8197021)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_7vx3n"]
+size = Vector3(3.2783203, 3.0880127, 4.297577)
+
+[node name="Dør" type="Node3D" unique_id=1743527176]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.19147062, 0, -0.039408922)
+script = SubResource("GDScript_62kbk")
+
+[node name="DørPlade" type="MeshInstance3D" parent="." unique_id=2119216826]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.251878, 4.9585867)
+mesh = SubResource("BoxMesh_7vx3n")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="DørPlade" unique_id=1463012605]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DørPlade/StaticBody3D" unique_id=704694907]
+shape = SubResource("ConcavePolygonShape3D_6vx1n")
+
+[node name="DørPlade2" type="MeshInstance3D" parent="." unique_id=186568152]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0411708, 1.251878, 4.9585867)
+mesh = SubResource("BoxMesh_7vx3n")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="DørPlade2" unique_id=743874060]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DørPlade2/StaticBody3D" unique_id=529972158]
+shape = SubResource("ConcavePolygonShape3D_s6ssv")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1259684617]
+libraries/ = SubResource("AnimationLibrary_s6ssv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=918510340]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6081983, 1.4323839, 4.6908607)
+shape = SubResource("BoxShape3D_w6gvy")
+
+[node name="Area3D" type="Area3D" parent="." unique_id=1331021902]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.39894807, 0.42894638, 3.1940043)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" unique_id=1322242372]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.13598633, 1.0440063, 0.503572)
+shape = SubResource("BoxShape3D_7vx3n")

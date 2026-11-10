@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://csjeg2aa2114t"]
+
+[ext_resource type="Texture2D" uid="uid://pcgjjuagr5y7" path="res://kugle.png" id="1_lpcwf"]
+[ext_resource type="Script" uid="uid://cvlj8jqn4khif" path="res://paint_ball.gd" id="1_pib8q"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v3aha"]
+albedo_texture = ExtResource("1_lpcwf")
+
+[sub_resource type="SphereMesh" id="SphereMesh_jgolk"]
+radius = 0.08
+height = 0.1
+
+[node name="Area3D" type="Area3D" unique_id=523750999]
+script = ExtResource("1_pib8q")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1411794126]
+material_override = SubResource("StandardMaterial3D_v3aha")
+mesh = SubResource("SphereMesh_jgolk")
