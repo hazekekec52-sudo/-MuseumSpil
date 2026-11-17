@@ -163,7 +163,7 @@ museum_robot = NodePath("../../MuseumRobot")
 robot_stop = NodePath("RobotStop")
 
 [node name="RobotStop" type="Marker3D" parent="Exhibits/Exhibit2" unique_id=819234095]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.37546, 0.15989828, -1.1629333)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.002421379, 0.15989828, -2.8830447)
 
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="Exhibits/Exhibit2" unique_id=1055981874]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7854366, 0.5334214, -0.1358931)
